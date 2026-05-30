@@ -1,158 +1,212 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { invitationData } from '../invitationData';
 
 export default function Envelope({ onOpenComplete }) {
-  const [status, setStatus] = useState('closed'); // 'closed' | 'opening' | 'opened'
+  const [animState, setAnimState] = useState('full'); // 'full' | 'shrunk' | 'openFlap' | 'slideNote' | 'exit'
 
-  const handleOpen = () => {
-    if (status !== 'closed') return;
-    setStatus('opening');
+  const handleTriggerOpen = () => {
+    if (animState !== 'full') return;
     
-    // Sequence timelines:
-    // 0.0s: Wax seal fades out, flap opens.
-    // 0.8s: Top flap is fully opened, card starts sliding out.
-    // 1.8s: Card is fully slid out, trigger fade out of the entire overlay.
+    // Start sequence
+    setAnimState('shrunk');
+
+    // 1. Shrink completes in 0.8s -> Open flap
     setTimeout(() => {
-      setStatus('opened');
+      setAnimState('openFlap');
+
+      // 2. Flap opens in 0.8s -> Slide note out
       setTimeout(() => {
-        onOpenComplete();
-      }, 1000); // Allow overlay to fade out smoothly
-    }, 2000);
+        setAnimState('slideNote');
+
+        // 3. Note slides up in 1.1s -> Trigger envelope exit & site slide-up
+        setTimeout(() => {
+          setAnimState('exit');
+          onOpenComplete(); // Notify parent to start sliding up the website
+        }, 1200);
+      }, 900);
+    }, 900);
   };
 
-  // Framer Motion Variants
-  const overlayVariants = {
-    visible: { opacity: 1 },
-    hidden: { 
+  // 1. Envelope Container Dimensions (Animating from full screen to card size)
+  const containerVariants = {
+    full: {
+      width: '100vw',
+      height: '100vh',
+      borderRadius: '0px',
+      maxWidth: '100%',
+      boxShadow: 'none',
+      transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] }
+    },
+    shrunk: {
+      width: window.innerWidth > 480 ? '420px' : '90%',
+      height: '280px',
+      borderRadius: '16px',
+      maxWidth: '420px',
+      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+      transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] }
+    },
+    openFlap: {
+      width: window.innerWidth > 480 ? '420px' : '90%',
+      height: '280px',
+      borderRadius: '16px',
+      maxWidth: '420px',
+      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)'
+    },
+    slideNote: {
+      width: window.innerWidth > 480 ? '420px' : '90%',
+      height: '280px',
+      borderRadius: '16px',
+      maxWidth: '420px',
+      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)'
+    },
+    exit: {
+      width: window.innerWidth > 480 ? '420px' : '90%',
+      height: '280px',
+      borderRadius: '16px',
+      maxWidth: '420px',
+      boxShadow: '0 0px 0px rgba(0, 0, 0, 0)',
+      pointerEvents: 'none'
+    }
+  };
+
+  // 2. Envelope Flaps & Backing Exit Animation (Flying upwards out of the screen)
+  const envelopePartsVariants = {
+    visible: { y: 0, opacity: 1 },
+    exit: { 
+      y: '-150vh', 
       opacity: 0,
-      transition: { duration: 0.8, ease: 'easeInOut' }
+      transition: { duration: 1.2, ease: [0.25, 1, 0.5, 1] }
     }
   };
 
+  // 3. Top Flap Rotation (Flipping up)
   const topFlapVariants = {
-    closed: { 
-      rotateX: 0,
-      zIndex: 5,
-      transition: { duration: 0.6, ease: 'easeInOut' }
-    },
-    opening: { 
-      rotateX: 180,
-      zIndex: 1,
-      transition: { duration: 0.8, ease: 'easeInOut' }
-    },
-    opened: {
-      rotateX: 180,
-      zIndex: 1
+    closed: { rotateX: 0, zIndex: 5 },
+    open: { 
+      rotateX: 180, 
+      zIndex: 1, 
+      transition: { duration: 0.8, ease: 'easeInOut' } 
     }
   };
 
+  // 4. Wax Seal Fade Out
   const sealVariants = {
-    closed: { scale: 1, opacity: 1 },
-    opening: { 
+    visible: { scale: 1, opacity: 1 },
+    hidden: { 
       scale: 0.6, 
       opacity: 0,
       transition: { duration: 0.4, ease: 'easeOut' }
-    },
-    opened: { scale: 0.6, opacity: 0 }
+    }
   };
 
+  // 5. Note Slide Up
   const noteVariants = {
-    closed: { 
-      y: 0, 
-      scale: 0.95,
-      zIndex: 2
-    },
-    opening: { 
+    tucked: { y: 0, scale: 0.95, zIndex: 2 },
+    slidOut: { 
       y: -140, 
       scale: 1.05,
       zIndex: 10,
-      transition: { 
-        delay: 0.7, 
-        duration: 1.1, 
-        ease: [0.25, 1, 0.5, 1] 
-      }
-    },
-    opened: { 
-      y: -140, 
-      scale: 1.05,
-      zIndex: 10 
+      transition: { duration: 1.1, ease: [0.25, 1, 0.5, 1] }
     }
   };
+
+  const isFlapOpen = animState !== 'full' && animState !== 'shrunk';
+  const isNoteSlid = animState === 'slideNote' || animState === 'exit';
+  const isExiting = animState === 'exit';
 
   return (
     <motion.div
       className="envelope-overlay"
-      variants={overlayVariants}
-      initial="visible"
-      animate={status === 'opened' ? 'hidden' : 'visible'}
+      initial={{ opacity: 1 }}
+      animate={isExiting ? { opacity: 0, transition: { delay: 0.4, duration: 0.8 } } : {}}
+      style={{
+        background: 'radial-gradient(circle at center, rgba(61, 53, 48, 0.99) 0%, rgba(20, 35, 25, 0.99) 100%)',
+        cursor: animState === 'full' ? 'pointer' : 'default'
+      }}
+      onClick={handleTriggerOpen}
     >
-      <div className="envelope-container" onClick={handleOpen}>
-        <motion.div 
-          className="envelope-wrapper-inner"
-          animate={status === 'opening' ? { y: [0, -8, 0], transition: { duration: 0.5 } } : {}}
-        >
-          {/* Back of Envelope */}
-          <div className="envelope-back" />
+      <motion.div
+        className="envelope-container"
+        variants={containerVariants}
+        initial="full"
+        animate={animState}
+        style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}
+      >
+        <div className="envelope-wrapper-inner" style={{ transformStyle: 'preserve-3d', width: '100%', height: '100%', position: 'relative' }}>
+          
+          {/* Group of envelope parts that will fly away together */}
+          <motion.div
+            style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, transformStyle: 'preserve-3d' }}
+            variants={envelopePartsVariants}
+            animate={isExiting ? 'exit' : 'visible'}
+          >
+            {/* Back of Envelope */}
+            <div className="envelope-back" />
 
-          {/* Invitation Card Inside */}
+            {/* Top Flap */}
+            <motion.div
+              className="envelope-flap-top"
+              variants={topFlapVariants}
+              initial="closed"
+              animate={isFlapOpen ? 'open' : 'closed'}
+            />
+
+            {/* Left Flap */}
+            <div className="envelope-flap-left" />
+
+            {/* Right Flap */}
+            <div className="envelope-flap-right" />
+
+            {/* Bottom Flap */}
+            <div className="envelope-flap-bottom" />
+
+            {/* Gold Wax Seal */}
+            <motion.div
+              className="wax-seal"
+              variants={sealVariants}
+              initial="visible"
+              animate={isFlapOpen ? 'hidden' : 'visible'}
+            >
+              <span className="wax-seal-text">
+                {invitationData.brideInitials}{invitationData.groomInitials}
+              </span>
+            </motion.div>
+          </motion.div>
+
+          {/* Invitation Card (Note) - Slides out and stays on screen during exit */}
           <motion.div
             className="envelope-note"
             variants={noteVariants}
-            initial="closed"
-            animate={status}
+            initial="tucked"
+            animate={isNoteSlid ? 'slidOut' : 'tucked'}
+            style={{
+              pointerEvents: isExiting ? 'none' : 'auto'
+            }}
           >
             <div className="initials">
               {invitationData.brideInitials} & {invitationData.groomInitials}
             </div>
-            <div className="title">
+            <div className="title" style={{ marginTop: '4px' }}>
               {invitationData.bride} & {invitationData.groom}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '8px', letterSpacing: '2px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '8px', letterSpacing: '2px', textTransform: 'uppercase' }}>
               Nişan Davetiyesi
             </div>
-            <div style={{ marginTop: '12px', color: 'var(--color-gold-dark)', fontSize: '1.2rem', fontFamily: 'var(--font-headings)' }}>
-              Açılıyor...
-            </div>
+            {animState === 'openFlap' && (
+              <div style={{ marginTop: '12px', color: 'var(--color-gold-dark)', fontSize: '1.1rem', fontFamily: 'var(--font-headings)' }}>
+                Davetiyeniz Hazırlanıyor...
+              </div>
+            )}
+            {isNoteSlid && (
+              <div style={{ marginTop: '12px', color: 'var(--color-green-dark)', fontSize: '1rem', fontFamily: 'var(--font-headings)', fontStyle: 'italic' }}>
+                Aramıza Hoş Geldiniz
+              </div>
+            )}
           </motion.div>
 
-          {/* Top Flap (closes over the note) */}
-          <motion.div
-            className="envelope-flap-top"
-            style={{ transformOrigin: 'top' }}
-            variants={topFlapVariants}
-            initial="closed"
-            animate={status}
-          />
-
-          {/* Left Flap */}
-          <div className="envelope-flap-left" />
-
-          {/* Right Flap */}
-          <div className="envelope-flap-right" />
-
-          {/* Bottom Flap */}
-          <div className="envelope-flap-bottom" />
-
-          {/* Wax Seal */}
-          <motion.div
-            className="wax-seal"
-            variants={sealVariants}
-            initial="closed"
-            animate={status}
-          >
-            <span className="wax-seal-text">
-              {invitationData.brideInitials}{invitationData.groomInitials}
-            </span>
-          </motion.div>
-        </motion.div>
-
-        {status === 'closed' && (
-          <div className="tap-indicator">
-            Davetiyeyi Açmak İçin Dokununuz
-          </div>
-        )}
-      </div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }

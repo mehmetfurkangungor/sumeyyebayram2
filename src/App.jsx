@@ -90,7 +90,12 @@ export default function App() {
 
       {/* Main Single Page Web App (Visible when envelope is opened/fading) */}
       {envelopeOpened && (
-        <div className="mobile-wrapper">
+        <motion.div 
+          className="mobile-wrapper"
+          initial={{ y: '100vh', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1.4, ease: [0.25, 1, 0.5, 1] }}
+        >
           
           {/* 2. Hero / Nişan Davetiyesi Kartı */}
           <motion.section 
@@ -343,7 +348,7 @@ export default function App() {
           <div className="footer-credits">
             {invitationData.brideInitials} & {invitationData.groomInitials} • {invitationData.eventTitle}
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );

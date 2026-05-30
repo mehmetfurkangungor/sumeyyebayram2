@@ -302,10 +302,9 @@ body.no-scroll {
 
 .envelope-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: var(--color-bej-dark);
-  border-radius: 12px;
+  border-radius: inherit;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
@@ -313,7 +312,7 @@ body.no-scroll {
 /* Inside Card (Note) */
 .envelope-note {
   position: absolute;
-  top: 10px;
+  top: 5%;
   left: 5%;
   width: 90%;
   height: 90%;
@@ -326,7 +325,6 @@ body.no-scroll {
   align-items: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   z-index: 2;
-  transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), z-index 0.5s;
   text-align: center;
   border: 1px solid rgba(212, 175, 55, 0.25);
 }
@@ -345,81 +343,54 @@ body.no-scroll {
   letter-spacing: 1px;
 }
 
-/* Envelope Flaps */
+/* Envelope Flaps (Responsive clip-path base) */
 .envelope-flap-top {
   position: absolute;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
-  border-left: 210px solid transparent;
-  border-right: 210px solid transparent;
-  border-top: 140px solid var(--color-bej);
-  border-radius: 12px 12px 0 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bej);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
   transform-origin: top;
   z-index: 5;
+  border-radius: inherit;
   transition: transform 0.8s ease-in-out;
-}
-
-@media (max-width: 420px) {
-  .envelope-flap-top {
-    border-left-width: calc(90vw / 2);
-    border-right-width: calc(90vw / 2);
-    border-top-width: calc(90vw * 0.33);
-  }
 }
 
 .envelope-flap-left {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  width: 0;
-  height: 0;
-  border-top: 140px solid transparent;
-  border-bottom: 140px solid transparent;
-  border-left: 210px solid rgba(232, 223, 199, 0.95);
-  border-radius: 12px 0 0 12px;
+  width: 100%;
+  height: 100%;
+  background: rgba(232, 223, 199, 0.95);
+  clip-path: polygon(0% 0%, 0% 100%, 50% 50%);
+  border-radius: inherit;
   z-index: 4;
-}
-
-@media (max-width: 420px) {
-  .envelope-flap-left {
-    border-top-width: 140px;
-    border-bottom-width: 140px;
-    border-left-width: calc(90vw / 2);
-  }
 }
 
 .envelope-flap-right {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  border-top: 140px solid transparent;
-  border-bottom: 140px solid transparent;
-  border-right: 210px solid rgba(232, 223, 199, 0.95);
-  border-radius: 0 12px 12px 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(232, 223, 199, 0.95);
+  clip-path: polygon(100% 0%, 100% 100%, 50% 50%);
+  border-radius: inherit;
   z-index: 4;
-}
-
-@media (max-width: 420px) {
-  .envelope-flap-right {
-    border-top-width: 140px;
-    border-bottom-width: 140px;
-    border-right-width: calc(90vw / 2);
-  }
 }
 
 .envelope-flap-bottom {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 60%;
+  height: 100%;
   background: var(--color-bej-dark);
-  clip-path: polygon(0% 100%, 50% 30%, 100% 100%);
-  border-radius: 0 0 12px 12px;
+  clip-path: polygon(0% 100%, 100% 100%, 50% 50%);
+  border-radius: inherit;
   z-index: 3;
 }
 
