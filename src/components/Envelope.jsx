@@ -70,13 +70,13 @@ export default function Envelope({ onOpenComplete }) {
     }
   };
 
-  // 2. Envelope Flaps & Backing Exit Animation (Flying upwards out of the screen)
+  // 2. Envelope Flaps & Backing Exit Animation (Sinking downwards out of the screen)
   const envelopePartsVariants = {
     visible: { y: 0, opacity: 1 },
     exit: { 
-      y: '-150vh', 
+      y: '100vh', 
       opacity: 0,
-      transition: { duration: 1.2, ease: [0.25, 1, 0.5, 1] }
+      transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] }
     }
   };
 
@@ -86,17 +86,33 @@ export default function Envelope({ onOpenComplete }) {
     open: { 
       rotateX: 180, 
       zIndex: 1, 
-      transition: { duration: 0.8, ease: 'easeInOut' } 
+      transition: { 
+        rotateX: { duration: 0.8, ease: [0.25, 1, 0.5, 1] },
+        zIndex: { delay: 0.3 } // Swap z-index halfway through the flip so it sits behind the note
+      } 
     }
   };
 
-  // 4. Wax Seal Fade Out
-  const sealVariants = {
-    visible: { scale: 1, opacity: 1 },
+  // 4. Wax Seal Split Animations (Cracking effect)
+  const sealLeftVariants = {
+    visible: { x: 0, rotate: 0, opacity: 1, scale: 1 },
     hidden: { 
-      scale: 0.6, 
+      x: -45, 
+      rotate: -20, 
       opacity: 0,
-      transition: { duration: 0.4, ease: 'easeOut' }
+      scale: 0.8,
+      transition: { duration: 0.7, ease: [0.25, 1, 0.5, 1] }
+    }
+  };
+
+  const sealRightVariants = {
+    visible: { x: 0, rotate: 0, opacity: 1, scale: 1 },
+    hidden: { 
+      x: 45, 
+      rotate: 20, 
+      opacity: 0,
+      scale: 0.8,
+      transition: { duration: 0.7, ease: [0.25, 1, 0.5, 1] }
     }
   };
 
@@ -104,10 +120,16 @@ export default function Envelope({ onOpenComplete }) {
   const noteVariants = {
     tucked: { y: 0, scale: 0.95, zIndex: 2 },
     slidOut: { 
-      y: -230, 
+      y: -260, 
       scale: 1.05,
       zIndex: 10,
       transition: { duration: 1.1, ease: [0.25, 1, 0.5, 1] }
+    },
+    exit: {
+      scale: 1.12,
+      opacity: 0,
+      y: -300,
+      transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] }
     }
   };
 
@@ -119,7 +141,8 @@ export default function Envelope({ onOpenComplete }) {
     <motion.div
       className="envelope-overlay"
       initial={{ opacity: 1 }}
-      animate={isExiting ? { opacity: 0, transition: { delay: 0.4, duration: 0.8 } } : {}}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: 'easeInOut' }}
       style={{
         background: 'radial-gradient(circle at center, rgba(61, 53, 48, 0.99) 0%, rgba(20, 35, 25, 0.99) 100%)',
         cursor: animState === 'full' ? 'pointer' : 'default'
@@ -166,20 +189,41 @@ export default function Envelope({ onOpenComplete }) {
               SB
             </div>
 
-            {/* Cream-colored Lotus Wax Seal */}
+            {/* Breaking Wax Seal (Left and Right halves) */}
             <motion.div
-              className="wax-seal"
-              variants={sealVariants}
-              initial="visible"
-              animate={isFlapOpen ? 'hidden' : 'visible'}
+              className="wax-seal-wrapper"
+              onClick={(e) => {
+                e.stopPropagation(); // Avoid triggering double open if clicking on seal
+                handleTriggerOpen();
+              }}
             >
-              <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#ab9f8c" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 1px 1px white)' }}>
-                <path d="M12 21c-2-2.5-5-3-5-7 0-4 5-8 5-8s5 4 5 8c0 4-3 4.5-5 7z" />
-                <path d="M12 21c-4-1-7-3-7-7 0-3 3-5 5-6" />
-                <path d="M12 21c4-1 7-3 7-7 0-3-3-5-5-6" />
-                <path d="M7 14c-2-1-3-3-3-5 0-2 2-3 4-3" />
-                <path d="M17 14c2-1 3-3 3-5 0-2-2-3-4-3" />
-              </svg>
+              {/* Left Half */}
+              <motion.div
+                className="wax-seal-half left"
+                variants={sealLeftVariants}
+                initial="visible"
+                animate={isFlapOpen ? 'hidden' : 'visible'}
+              >
+                <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#6e5010" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 21c-2-2.5-5-3-5-7 0-4 5-8 5-8" />
+                  <path d="M12 21c-4-1-7-3-7-7 0-3 3-5 5-6" />
+                  <path d="M7 14c-2-1-3-3-3-5 0-2 2-3 4-3" />
+                </svg>
+              </motion.div>
+
+              {/* Right Half */}
+              <motion.div
+                className="wax-seal-half right"
+                variants={sealRightVariants}
+                initial="visible"
+                animate={isFlapOpen ? 'hidden' : 'visible'}
+              >
+                <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#6e5010" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 21c0-4 5-8 5-8" />
+                  <path d="M12 21c4-1 7-3 7-7 0-3-3-5-5-6" />
+                  <path d="M17 14c2-1 3-3 3-5 0-2-2-3-4-3" />
+                </svg>
+              </motion.div>
             </motion.div>
           </motion.div>
 
@@ -188,7 +232,7 @@ export default function Envelope({ onOpenComplete }) {
             className="envelope-note"
             variants={noteVariants}
             initial="tucked"
-            animate={isNoteSlid ? 'slidOut' : 'tucked'}
+            animate={isExiting ? 'exit' : (isNoteSlid ? 'slidOut' : 'tucked')}
             style={{
               pointerEvents: isExiting ? 'none' : 'auto'
             }}
@@ -207,7 +251,7 @@ export default function Envelope({ onOpenComplete }) {
                 Davetiyeniz Hazırlanıyor...
               </div>
             )}
-            {isNoteSlid && (
+            {isNoteSlid && !isExiting && (
               <div style={{ marginTop: '12px', color: 'var(--color-green-dark)', fontSize: '1rem', fontFamily: 'var(--font-headings)', fontStyle: 'italic' }}>
                 Aramıza Hoş Geldiniz
               </div>

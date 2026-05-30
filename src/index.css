@@ -355,7 +355,6 @@ body.no-scroll {
   transform-origin: top;
   z-index: 5;
   border-radius: inherit;
-  transition: transform 0.8s ease-in-out;
   filter: drop-shadow(0px 8px 12px rgba(61, 53, 48, 0.15));
 }
 
@@ -415,34 +414,50 @@ body.no-scroll {
   opacity: 0.85;
 }
 
-/* Wax Seal - Pearl Cream-colored style with 3D shadow */
-.wax-seal {
+/* Realistic Wax Seal Styles (Splitting Halves) */
+.wax-seal-wrapper {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f6f1e6 50%, #dccfb3 100%);
-  border-radius: 50%;
-  box-shadow: 
-    0 6px 16px rgba(61, 53, 48, 0.22), 
-    inset 0 2px 4px rgba(255, 255, 255, 0.8), 
-    inset 0 -2px 4px rgba(61, 53, 48, 0.1);
   z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  border: 1px solid #dfd8c1;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease-out;
+  transform-style: preserve-3d;
 }
 
-.wax-seal:hover {
-  transform: translate(-50%, -50%) scale(1.08);
+.wax-seal-half {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 49% 51% 52% 48% / 46% 45% 55% 54%;
+  background: radial-gradient(circle at 35% 35%, #fff1c2 0%, #d4af37 35%, #aa871e 70%, #6e5010 100%);
   box-shadow: 
-    0 8px 24px rgba(61, 53, 48, 0.3), 
-    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+    0 6px 15px rgba(61, 53, 48, 0.25), 
+    inset 0 2px 3px rgba(255, 255, 255, 0.6), 
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(184, 147, 38, 0.4);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.wax-seal-half.left {
+  clip-path: polygon(0% 0%, 50% 0%, 46% 15%, 54% 35%, 45% 55%, 53% 75%, 46% 90%, 50% 100%, 0% 100%);
+}
+
+.wax-seal-half.right {
+  clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%, 46% 90%, 53% 75%, 45% 55%, 54% 35%, 46% 15%);
+}
+
+.wax-seal-half svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(1px 1px 1.5px rgba(0, 0, 0, 0.5)) drop-shadow(-0.5px -0.5px 0.5px rgba(255, 255, 255, 0.35));
 }
 
 /* Floating Click Instruction Indicator */

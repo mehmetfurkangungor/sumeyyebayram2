@@ -92,9 +92,9 @@ export default function App() {
       {envelopeOpened && (
         <motion.div 
           className="mobile-wrapper"
-          initial={{ y: '100vh', opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.4, ease: [0.25, 1, 0.5, 1] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.0, ease: 'easeOut' }}
         >
           
           {/* 2. Hero / Nişan Davetiyesi Kartı */}
