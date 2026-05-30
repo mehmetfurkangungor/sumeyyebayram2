@@ -343,19 +343,20 @@ body.no-scroll {
   letter-spacing: 1px;
 }
 
-/* Envelope Flaps (Responsive clip-path base) */
+/* Envelope Flaps (Responsive clip-path base with depth shadows) */
 .envelope-flap-top {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--color-bej);
+  background: linear-gradient(to bottom, #fbf9f4 0%, #f3ece0 100%);
   clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
   transform-origin: top;
   z-index: 5;
   border-radius: inherit;
   transition: transform 0.8s ease-in-out;
+  filter: drop-shadow(0px 8px 12px rgba(61, 53, 48, 0.15));
 }
 
 .envelope-flap-left {
@@ -364,10 +365,11 @@ body.no-scroll {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(232, 223, 199, 0.95);
+  background: linear-gradient(to right, #faf8f3 0%, #ebe4d3 100%);
   clip-path: polygon(0% 0%, 0% 100%, 50% 50%);
   border-radius: inherit;
   z-index: 4;
+  filter: drop-shadow(4px 0px 8px rgba(61, 53, 48, 0.08));
 }
 
 .envelope-flap-right {
@@ -376,10 +378,11 @@ body.no-scroll {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(232, 223, 199, 0.95);
+  background: linear-gradient(to left, #faf8f3 0%, #ebe4d3 100%);
   clip-path: polygon(100% 0%, 100% 100%, 50% 50%);
   border-radius: inherit;
   z-index: 4;
+  filter: drop-shadow(-4px 0px 8px rgba(61, 53, 48, 0.08));
 }
 
 .envelope-flap-bottom {
@@ -388,53 +391,58 @@ body.no-scroll {
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--color-bej-dark);
+  background: linear-gradient(to top, #f3ece0 0%, #e3dac4 100%);
   clip-path: polygon(0% 100%, 100% 100%, 50% 50%);
   border-radius: inherit;
   z-index: 3;
+  filter: drop-shadow(0px -4px 8px rgba(61, 53, 48, 0.06));
 }
 
-/* Wax Seal */
+/* Debossed SB Text Engraving style */
+.envelope-engraving {
+  position: absolute;
+  top: calc(50% + 44px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-headings);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #a89a83;
+  letter-spacing: 6px;
+  z-index: 4;
+  pointer-events: none;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.9), -0.5px -0.5px 1px rgba(0, 0, 0, 0.15);
+  opacity: 0.85;
+}
+
+/* Wax Seal - Pearl Cream-colored style with 3D shadow */
 .wax-seal {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 68px;
-  height: 68px;
-  transform: translate(-50%, -30%);
-  background: radial-gradient(circle at 35% 35%, var(--color-gold-light) 0%, var(--color-gold) 40%, var(--color-gold-dark) 100%);
+  width: 72px;
+  height: 72px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f6f1e6 50%, #dccfb3 100%);
   border-radius: 50%;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 6px 16px rgba(61, 53, 48, 0.22), 
+    inset 0 2px 4px rgba(255, 255, 255, 0.8), 
+    inset 0 -2px 4px rgba(61, 53, 48, 0.1);
   z-index: 6;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: 1px solid #dfd8c1;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease-out;
-  border: 2px solid var(--color-gold-dark);
 }
 
 .wax-seal:hover {
-  transform: translate(-50%, -30%) scale(1.1);
-  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.5);
-}
-
-.wax-seal::after {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1.5px dashed rgba(255, 255, 255, 0.4);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.wax-seal-text {
-  font-family: var(--font-names);
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: var(--color-green-dark);
-  text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
-  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.08);
+  box-shadow: 
+    0 8px 24px rgba(61, 53, 48, 0.3), 
+    inset 0 2px 4px rgba(255, 255, 255, 0.9);
 }
 
 /* Floating Click Instruction Indicator */

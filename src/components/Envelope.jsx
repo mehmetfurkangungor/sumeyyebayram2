@@ -28,7 +28,7 @@ export default function Envelope({ onOpenComplete }) {
     }, 900);
   };
 
-  // 1. Envelope Container Dimensions (Animating from full screen to card size)
+  // 1. Vertical Envelope Container Dimensions (Animating from full screen to vertical card size)
   const containerVariants = {
     full: {
       width: '100vw',
@@ -39,32 +39,32 @@ export default function Envelope({ onOpenComplete }) {
       transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] }
     },
     shrunk: {
-      width: window.innerWidth > 480 ? '420px' : '90%',
-      height: '280px',
-      borderRadius: '16px',
-      maxWidth: '420px',
-      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+      width: window.innerWidth > 480 ? '330px' : '85%',
+      height: '450px',
+      borderRadius: '8px',
+      maxWidth: '340px',
+      boxShadow: '0 20px 50px rgba(61, 53, 48, 0.22)',
       transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] }
     },
     openFlap: {
-      width: window.innerWidth > 480 ? '420px' : '90%',
-      height: '280px',
-      borderRadius: '16px',
-      maxWidth: '420px',
-      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)'
+      width: window.innerWidth > 480 ? '330px' : '85%',
+      height: '450px',
+      borderRadius: '8px',
+      maxWidth: '340px',
+      boxShadow: '0 20px 50px rgba(61, 53, 48, 0.22)'
     },
     slideNote: {
-      width: window.innerWidth > 480 ? '420px' : '90%',
-      height: '280px',
-      borderRadius: '16px',
-      maxWidth: '420px',
-      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)'
+      width: window.innerWidth > 480 ? '330px' : '85%',
+      height: '450px',
+      borderRadius: '8px',
+      maxWidth: '340px',
+      boxShadow: '0 20px 50px rgba(61, 53, 48, 0.22)'
     },
     exit: {
-      width: window.innerWidth > 480 ? '420px' : '90%',
-      height: '280px',
-      borderRadius: '16px',
-      maxWidth: '420px',
+      width: window.innerWidth > 480 ? '330px' : '85%',
+      height: '450px',
+      borderRadius: '8px',
+      maxWidth: '340px',
       boxShadow: '0 0px 0px rgba(0, 0, 0, 0)',
       pointerEvents: 'none'
     }
@@ -100,11 +100,11 @@ export default function Envelope({ onOpenComplete }) {
     }
   };
 
-  // 5. Note Slide Up
+  // 5. Note Slide Up (Adjusted for vertical aspect ratio)
   const noteVariants = {
     tucked: { y: 0, scale: 0.95, zIndex: 2 },
     slidOut: { 
-      y: -140, 
+      y: -230, 
       scale: 1.05,
       zIndex: 10,
       transition: { duration: 1.1, ease: [0.25, 1, 0.5, 1] }
@@ -161,16 +161,25 @@ export default function Envelope({ onOpenComplete }) {
             {/* Bottom Flap */}
             <div className="envelope-flap-bottom" />
 
-            {/* Gold Wax Seal */}
+            {/* Debossed SB text engraving below the seal */}
+            <div className="envelope-engraving">
+              SB
+            </div>
+
+            {/* Cream-colored Lotus Wax Seal */}
             <motion.div
               className="wax-seal"
               variants={sealVariants}
               initial="visible"
               animate={isFlapOpen ? 'hidden' : 'visible'}
             >
-              <span className="wax-seal-text">
-                {invitationData.brideInitials}{invitationData.groomInitials}
-              </span>
+              <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#ab9f8c" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 1px 1px white)' }}>
+                <path d="M12 21c-2-2.5-5-3-5-7 0-4 5-8 5-8s5 4 5 8c0 4-3 4.5-5 7z" />
+                <path d="M12 21c-4-1-7-3-7-7 0-3 3-5 5-6" />
+                <path d="M12 21c4-1 7-3 7-7 0-3-3-5-5-6" />
+                <path d="M7 14c-2-1-3-3-3-5 0-2 2-3 4-3" />
+                <path d="M17 14c2-1 3-3 3-5 0-2-2-3-4-3" />
+              </svg>
             </motion.div>
           </motion.div>
 
